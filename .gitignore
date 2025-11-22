@@ -1,0 +1,23 @@
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Env
+*.env
+server/.env
+client/.env
+
+# Build outputs
+client/dist
+client/build
+server/dist
+server/build
+
+# IDE
+.vscode/
+.DS_Store
+
+# Logs
+logs/
+*.log
