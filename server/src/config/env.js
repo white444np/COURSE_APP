@@ -29,16 +29,21 @@ function parseBoolean(value, fallback = false) {
   return fallback;
 }
 
-const requiredVars = ['JWT_SECRET'];
+const requiredVars = ['JWT_SECRET', 'MONGO_URI', 'RAZORPAY_KEY_ID', 'RAZORPAY_KEY_SECRET'];
 const missing = requiredVars.filter((key) => !process.env[key]);
 if (missing.length) {
   throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
 }
 
+const resolvedSendgridFrom = process.env.SENDGRID_FROM
+  || process.env.EMAIL_FROM
+  || process.env.ADMIN_EMAIL
+  || 'MiniCourse <no-reply@minicourse.dev>';
+
 module.exports = {
   nodeEnv: process.env.NODE_ENV || 'development',
   port: Number(process.env.PORT) || 5000,
-  mongoUri: process.env.MONGO_URI || 'mongodb://localhost:27017/minicourse',
+  mongoUri: process.env.MONGO_URI,
   clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
   passwordReset: {
     tokenExpiryMinutes: Number(process.env.RESET_TOKEN_EXPIRY_MINUTES) || 30,
@@ -58,12 +63,14 @@ module.exports = {
     },
   },
   email: {
-    from: process.env.SENDGRID_FROM || process.env.ADMIN_EMAIL || 'MiniCourse <no-reply@minicourse.dev>',
+    from: resolvedSendgridFrom,
     provider: 'sendgrid',
     sendgrid: {
       apiKey: process.env.SENDGRID_API_KEY || '',
     },
-    enabled: Boolean(process.env.SENDGRID_API_KEY) && Boolean(process.env.SENDGRID_FROM || process.env.ADMIN_EMAIL),
+    enabled: Boolean(process.env.SENDGRID_API_KEY)
+      && Boolean(resolvedSendgridFrom)
+      && resolvedSendgridFrom !== 'MiniCourse <no-reply@minicourse.dev>',
   },
   jwt: {
     secret: process.env.JWT_SECRET,

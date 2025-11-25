@@ -19,32 +19,59 @@ MiniCourse is a MERN-stack learning marketplace with a modern Vite + React front
 
 ## Environment Configuration
 
-Create a `.env` file inside the `server` directory (the config loader resolves `server/.env` from `server/src/config/env.js`). The following variables are required for a fully functional environment:
+Copy the sample files and then fill them with your credentials:
 
-| Variable | Description |
-| --- | --- |
-| `PORT` | Port for the backend server (defaults to `5000`). |
-| `MONGO_URI` | Connection string for MongoDB. |
-| `JWT_SECRET` | Secret used to sign authentication tokens. |
-| `CLIENT_URL` | Base URL of the frontend (used when constructing reset links). |
-| `RAZORPAY_KEY_ID` | Public Razorpay key used on the client to initialize the checkout. |
-| `RAZORPAY_KEY_SECRET` | Private Razorpay key used on the server to create and verify orders. |
-| `RAZORPAY_WEBHOOK_SECRET` | Secret for validating webhook signatures (optional but recommended). |
-| `RAZORPAY_CURRENCY` | Currency code for orders (defaults to `INR`). |
-| `SENDGRID_API_KEY` | SendGrid API key with “Mail Send” scope. |
-| `SENDGRID_FROM` | Verified sender identity for transactional emails (e.g. `MiniCourse <no-reply@minicourse.dev>`). |
+```bash
+cp server/.env.example server/.env
+cp client/.env.example client/.env
+```
 
-Additional optional variables are available in `server/src/config/env.js` for password resets, admin bootstrap credentials, and environment toggles.
+### MongoDB Atlas
+
+1. Create a free cluster on [MongoDB Atlas](https://www.mongodb.com/atlas/database) and add a database user with the `readWriteAnyDatabase` role (or similar for the specific DB).
+2. Whitelist your IP (or `0.0.0.0/0` for local testing) under *Network Access*.
+3. Copy the SRV connection string from *Database > Connect > Drivers* and paste it into `MONGO_URI` (replace `<username>` and `<password>` inline).
+4. Keep the `/minicourse` database name so the models use the expected database, or update the URI if you prefer another name.
+
+### Server variables (`server/.env`)
+
+| Variable | Description | Example |
+| --- | --- | --- |
+| `NODE_ENV` | `development`, `production`, etc. | `development` |
+| `PORT` | API port (Express defaults to `5000`). | `5000` |
+| `CLIENT_URL` | Base URL of the frontend for reset links. | `http://localhost:5173` |
+| `MONGO_URI` | MongoDB Atlas SRV URI. | `mongodb+srv://admin:password@cluster0.abc.mongodb.net/minicourse` |
+| `JWT_SECRET` | 64+ char secret for signing tokens. | `p9X...` |
+| `JWT_EXPIRES_IN` | Token lifespan. | `1d` |
+| `RESET_TOKEN_EXPIRY_MINUTES` | Password reset token TTL. | `30` |
+| `ADMIN_NAME` | Display name for the auto-provisioned admin. | `MiniCourse Admin` |
+| `ADMIN_EMAIL` | Admin login email. | `founder@company.com` |
+| `ADMIN_PASSWORD` | Admin login password (used on bootstrap/reset). | `StrongPassw0rd!` |
+| `ADMIN_FORCE_RESET` | Set to `true` to overwrite the stored admin credentials on next boot. | `false` |
+| `RAZORPAY_KEY_ID` | Public key used when creating checkout orders. | `rzp_test_abc123` |
+| `RAZORPAY_KEY_SECRET` | Razorpay secret used for signatures and verification. | `your_secret` |
+| `RAZORPAY_WEBHOOK_SECRET` | Optional webhook signing secret. | `whsec_xxx` |
+| `RAZORPAY_CURRENCY` | Default currency for orders. | `INR` |
+| `SENDGRID_API_KEY` | API key with “Mail Send” permission. | `SG.xxxxxx` |
+| `SENDGRID_FROM` | Verified sender identity (you can also use `EMAIL_FROM`). | `MiniCourse <no-reply@example.com>` |
+
+### Client variables (`client/.env`)
+
+| Variable | Description | Example |
+| --- | --- | --- |
+| `VITE_API_BASE_URL` | Fully qualified backend URL including the `/api` prefix. | `http://localhost:5000/api` |
+
+Additional optional variables are available in `server/src/config/env.js` if you need to tweak password resets, email toggles, or Razorpay defaults.
 
 ## Installation
 
 Install dependencies for both the client and server:
 
-```powershell
+```bash
 cd server
 npm install
 
-cd ..\client
+cd ../client
 npm install
 ```
 
@@ -52,14 +79,14 @@ npm install
 
 Start the backend API:
 
-```powershell
+```bash
 cd server
 npm run dev
 ```
 
 Start the frontend client in a separate terminal:
 
-```powershell
+```bash
 cd client
 npm run dev
 ```
