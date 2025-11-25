@@ -40,7 +40,7 @@ cp client/.env.example client/.env
 | `NODE_ENV` | `development`, `production`, etc. | `development` |
 | `PORT` | API port (Express defaults to `5000`). | `5000` |
 | `CLIENT_URL` | Base URL of the frontend for reset links. | `http://localhost:5173` |
-| `MONGO_URI` | MongoDB Atlas SRV URI. | `mongodb+srv://admin:password@cluster0.abc.mongodb.net/minicourse` |
+| `MONGO_URI` | MongoDB Atlas SRV URI. | `YOUR_URI` |
 | `JWT_SECRET` | 64+ char secret for signing tokens. | `p9X...` |
 | `JWT_EXPIRES_IN` | Token lifespan. | `1d` |
 | `RESET_TOKEN_EXPIRY_MINUTES` | Password reset token TTL. | `30` |
